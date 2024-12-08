@@ -24,7 +24,7 @@ const SwapHistory = ({ swapHistory }) => {
           {swapHistory.length > 0 ? (
             swapHistory.map((swap, index) => (
               <tr key={index}>
-                <td className="table-cell">{swap.user}</td>
+                <td className="table-cell">{swap.user.slice(0, 5)}</td> {/* Wyświetlanie pierwszych 5 znaków adresu użytkownika */}
                 <td className="table-cell">{swap.ammName}</td>
                 <td className="table-cell">{swap.tokenGive}</td>
                 <td className="table-cell">{swap.tokenGiveAmount}</td>

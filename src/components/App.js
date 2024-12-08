@@ -455,8 +455,6 @@ function App() {
             </div>
           </div>
         )}
-
-        <h3>AMMs</h3>
         <DexTable amms={amms} highlightedDex={highlightedDex} />
 
         <SwapHistory swapHistory={swapHistory} /> {/* Użycie nowego komponentu */}

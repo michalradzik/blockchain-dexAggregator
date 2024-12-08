@@ -4,8 +4,6 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Blockies from 'react-blockies'
 
-import logo from '../logo.png';
-
 import { loadAccount, loadBalances } from '../store/interactions'
 
 import config from '../config.json'
@@ -32,15 +30,6 @@ const Navigation = () => {
 
   return (
     <Navbar className='my-3' expand="lg">
-      <img
-        alt="logo"
-        src={logo}
-        width="40"
-        height="40"
-        className="d-inline-block align-top mx-3"
-      />
-      <Navbar.Brand href="#">Dapp University AMM</Navbar.Brand>
-
       <Navbar.Toggle aria-controls="nav" />
       <Navbar.Collapse id="nav" className="justify-content-end">
 
