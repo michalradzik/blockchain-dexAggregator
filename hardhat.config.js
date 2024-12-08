@@ -45,6 +45,7 @@ module.exports = {
     },
     sepolia: {
       url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+      chainId: 11155111,
       accounts: privateKeys.split(","),
     },
     WorldChainSepoliaTestnet: {
