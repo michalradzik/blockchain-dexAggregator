@@ -240,8 +240,8 @@ function App() {
           .catch((error) => console.error("Error initializing GLPK:", error));
       } catch (error) {
         console.error("Error loading blockchain data:", error);
-        setAlertMessage(error.message || "An error occurred while loading blockchain data.");
-        setShowAlert(true);
+        //setAlertMessage(error.message || "An error occurred while loading blockchain data.");
+       // setShowAlert(true);
       }
     };
   
