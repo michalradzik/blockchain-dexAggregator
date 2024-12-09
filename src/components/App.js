@@ -160,7 +160,8 @@ function App() {
   
 
 
-  const DEX_AGGREGATOR_ADDRESS = "0xAf8ae0221E020F7be694792caa7B36532Da07159"; // Twój adres kontraktu
+  const DEX_AGGREGATOR_ADDRESS = "0xAf8ae0221E020F7be694792caa7B36532Da07159"; 
+
 
   useEffect(() => {
     const loadBlockchainData = async () => {
@@ -172,7 +173,7 @@ function App() {
         const { chainId, networkName } = await loadNetwork(provider, dispatch);
         console.log(`Connected to network: ${networkName} (Chain ID: ${chainId})`);
         setNetworkName(networkName);
-  
+        window.location.reload();
         if (!DEX_AGGREGATOR_ADDRESS || DEX_AGGREGATOR_ADDRESS === ethers.constants.AddressZero) {
           throw new Error("DexAggregator address is invalid.");
         }
