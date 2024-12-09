@@ -158,122 +158,124 @@ function App() {
     }
   }, []);
   
+
+
+  const DEX_AGGREGATOR_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Twój adres kontraktu
+
+  const loadBlockchainData = async () => {
+    try {
+      console.log("Initializing provider...");
+      const provider = await loadProvider(dispatch);
+      console.log("Provider initialized:", provider);
+
+      const { chainId, networkName } = await loadNetwork(provider, dispatch);
+      console.log(`Connected to network: ${networkName} (Chain ID: ${chainId})`);
+      setNetworkName(networkName);
+
+      if (!DEX_AGGREGATOR_ADDRESS || DEX_AGGREGATOR_ADDRESS === ethers.constants.AddressZero) {
+        throw new Error("DexAggregator address is invalid.");
+      }
+
+      console.log("DexAggregator address:", DEX_AGGREGATOR_ADDRESS);
+
+      const dexAggregatorContract = new ethers.Contract(
+        DEX_AGGREGATOR_ADDRESS,
+        DexAggregatorArtifact.abi,
+        provider.getSigner()
+      );
+      console.log("DexAggregator contract loaded:", dexAggregatorContract);
+      setDexAggregator(dexAggregatorContract);
+
+      // Fetch tokens
+      const fetchedTokens = await dexAggregatorContract.getTokens();
+      const formattedTokens = fetchedTokens.map(([name, symbol, tokenAddress]) => ({
+        name: name || "Unknown",
+        symbol: symbol || "UNK",
+        tokenAddress: tokenAddress || ethers.constants.AddressZero,
+      }));
+      setTokens(formattedTokens);
+      console.log("Fetched tokens:", formattedTokens);
+
+      const fetchedAmms = await dexAggregatorContract.getAmms();
+      console.log("Fetched AMMs from getDexes:", fetchedAmms);
+
+      const formattedAmms = fetchedAmms.map(
+        ([ammAddress, makerFee, takerFee, liquidityToken1, liquidityToken2, name], index) => {
+          const token1 = parseFloat(
+            ethers.utils.formatUnits(liquidityToken1 || ethers.BigNumber.from(0), 18)
+          );
+          const token2 = parseFloat(
+            ethers.utils.formatUnits(liquidityToken2 || ethers.BigNumber.from(0), 18)
+          );
+          const price = token1 > 0 ? token2 / token1 : 0;
+
+          return {
+            name: name || `AMM ${index + 1}`,
+            ammAddress: ammAddress || "0x0",
+            makerFee: parseFloat(
+              ethers.utils.formatUnits(makerFee || ethers.BigNumber.from(0), 4)
+            ),
+            takerFee: parseFloat(
+              ethers.utils.formatUnits(takerFee || ethers.BigNumber.from(0), 4)
+            ),
+            liquidity: {
+              token1,
+              token2,
+            },
+            tokenInSymbol: "N/A",
+            tokenOutSymbol: "N/A",
+            tokenIn: "N/A",
+            tokenOut: "N/A",
+            price,
+          };
+        }
+      );
+
+      setAmms(formattedAmms);
+      console.log("Formatted AMMs:", formattedAmms);
+
+      glpk()
+        .then((instance) => console.log("GLPK instance initialized:", instance))
+        .catch((error) => console.error("Error initializing GLPK:", error));
+    } catch (error) {
+      console.error("Error loading blockchain data:", error);
+      setAlertMessage(error.message || "An error occurred while loading blockchain data.");
+      setShowAlert(true);
+    }
+  };
+
+  // Użycie useEffect do wywołania funkcji po zamontowaniu komponentu
+  useEffect(() => {
+    loadBlockchainData();
+  }, []);
+  
   useEffect(() => {
     const handleAccountsChanged = async (accounts) => {
       if (accounts.length === 0) {
         console.log('Please connect to MetaMask.');
       } else {
-        const provider = await loadProvider(dispatch);
-        const userAccount = await loadAccount(provider, dispatch);
-        console.log('Account loaded:', userAccount);
-  
-        const history = await fetchSwapHistory();
-        setSwapHistory(history);
+        // Odświeżanie danych i stanu aplikacji
+        await loadBlockchainData();
       }
     };
   
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', handleAccountsChanged);
   
-      handleAccountsChanged(window.ethereum.selectedAddress ? [window.ethereum.selectedAddress] : []);
+      // Wywołanie na początku, aby upewnić się, że stan jest aktualny
+      window.ethereum.request({ method: 'eth_accounts' })
+        .then(accounts => handleAccountsChanged(accounts))
+        .catch(error => console.error(error));
   
+      // Odpinanie listenera przy odmontowywaniu komponentu
       return () => {
         window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
       };
     }
-  }, [dispatch]);
+  }, []); // Upewnij się, że lista zależności jest odpowiednia, aby uniknąć niepotrzebnych wywołań
   
-
-  const DEX_AGGREGATOR_ADDRESS = "0xAf8ae0221E020F7be694792caa7B36532Da07159"; 
-
-
-  useEffect(() => {
-    const loadBlockchainData = async () => {
-      try {
-        console.log("Initializing provider...");
-        const provider = await loadProvider(dispatch);
-        console.log("Provider initialized:", provider);
   
-        const { chainId, networkName } = await loadNetwork(provider, dispatch);
-        console.log(`Connected to network: ${networkName} (Chain ID: ${chainId})`);
-        setNetworkName(networkName);
-   
-        if (!DEX_AGGREGATOR_ADDRESS || DEX_AGGREGATOR_ADDRESS === ethers.constants.AddressZero) {
-          throw new Error("DexAggregator address is invalid.");
-        }
   
-        console.log("DexAggregator address:", DEX_AGGREGATOR_ADDRESS);
-  
-        const dexAggregatorContract = new ethers.Contract(
-          DEX_AGGREGATOR_ADDRESS,
-          DexAggregatorArtifact.abi,
-          provider.getSigner()
-        );
-        console.log("DexAggregator contract loaded:", dexAggregatorContract);
-        setDexAggregator(dexAggregatorContract);
-  
-        // Fetch tokens
-        const fetchedTokens = await dexAggregatorContract.getTokens();
-        const formattedTokens = fetchedTokens.map(([name, symbol, tokenAddress]) => ({
-          name: name || "Unknown",
-          symbol: symbol || "UNK",
-          tokenAddress: tokenAddress || ethers.constants.AddressZero,
-        }));
-        setTokens(formattedTokens);
-        console.log("Fetched tokens:", formattedTokens);
-  
-        const fetchedAmms = await dexAggregatorContract.getAmms();
-        console.log("Fetched AMMs from getDexes:", fetchedAmms);
-  
-        const formattedAmms = fetchedAmms.map(
-          ([ammAddress, makerFee, takerFee, liquidityToken1, liquidityToken2, name], index) => {
-            const token1 = parseFloat(
-              ethers.utils.formatUnits(liquidityToken1 || ethers.BigNumber.from(0), 18)
-            );
-            const token2 = parseFloat(
-              ethers.utils.formatUnits(liquidityToken2 || ethers.BigNumber.from(0), 18)
-            );
-            const price = token1 > 0 ? token2 / token1 : 0;
-  
-            return {
-              name: name || `AMM ${index + 1}`,
-              ammAddress: ammAddress || "0x0",
-              makerFee: parseFloat(
-                ethers.utils.formatUnits(makerFee || ethers.BigNumber.from(0), 4)
-              ),
-              takerFee: parseFloat(
-                ethers.utils.formatUnits(takerFee || ethers.BigNumber.from(0), 4)
-              ),
-              liquidity: {
-                token1,
-                token2,
-              },
-              tokenInSymbol: "N/A",
-              tokenOutSymbol: "N/A",
-              tokenIn: "N/A",
-              tokenOut: "N/A",
-              price,
-            };
-          }
-        );
-  
-        setAmms(formattedAmms);
-        console.log("Formatted AMMs:", formattedAmms);
-  
-        glpk()
-          .then((instance) => console.log("GLPK instance initialized:", instance))
-          .catch((error) => console.error("Error initializing GLPK:", error));
-      } catch (error) {
-        console.error("Error loading blockchain data:", error);
-        //setAlertMessage(error.message || "An error occurred while loading blockchain data.");
-       // setShowAlert(true);
-      }
-    };
-  
-    loadBlockchainData();
-  }, []);
-  
-    
     const handleSwap = async () => {
       console.log('Initiating swap...');
       console.log('dexAggregator in handleSwap', dexAggregator);

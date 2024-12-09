@@ -22,11 +22,37 @@ const Navigation = () => {
   }
 
   const networkHandler = async (e) => {
-    await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: e.target.value }],
-    })
-  }
+    console.log('Selected network:', e.target.value);
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: e.target.value }],
+      });
+    } catch (switchError) {
+      console.error('Error switching networks:', switchError);
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: e.target.value,
+              chainName: 'Sepolia',
+              nativeCurrency: {
+                name: 'SepoliaETH',
+                symbol: 'SepoliaETH',
+                decimals: 18
+              },
+              rpcUrls: ['https://eth-sepolia.g.alchemy.com/v2/rvqQZ6AFZwcbLCuE02OnXtBuxiCCcwt_'],
+              blockExplorerUrls: ['https://sepolia.etherscan.io']
+            }],
+          });
+        } catch (addError) {
+          console.error('Failed to add the network:', addError);
+        }
+      }
+    }
+  };
+  
 
   return (
     <Navbar className='my-3' expand="lg">
@@ -35,16 +61,18 @@ const Navigation = () => {
 
         <div className="d-flex justify-content-end mt-3">
 
-          <Form.Select
-            aria-label="Network Selector"
-            value={config[chainId] ? `0x${chainId.toString(16)}` : `0`}
-            onChange={networkHandler}
-            style={{ maxWidth: '200px', marginRight: '20px' }}
-          >
-            <option value="0" disabled>Select Network</option>
-            <option value="0x7A69">Localhost</option>
-            <option value="0x5">Goerli</option>
-          </Form.Select>
+        <Form.Select
+  aria-label="Network Selector"
+  value={chainId ? `0x${chainId.toString(16)}` : '0'}
+  onChange={networkHandler}
+  style={{ maxWidth: '200px', marginRight: '20px' }}
+>
+  <option value="0" disabled>Select Network</option>
+  <option value="0x539">Localhost</option>
+  <option value="0x5">Goerli</option>
+  <option value="0xA9A409">Sepolia</option>
+</Form.Select>
+
 
           {account ? (
             <Navbar.Text className='d-flex align-items-center'>
