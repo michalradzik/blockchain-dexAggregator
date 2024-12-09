@@ -158,7 +158,31 @@ function App() {
     }
   }, []);
   
-
+  useEffect(() => {
+    const handleAccountsChanged = async (accounts) => {
+      if (accounts.length === 0) {
+        console.log('Please connect to MetaMask.');
+      } else {
+        const provider = await loadProvider(dispatch);
+        const userAccount = await loadAccount(provider, dispatch);
+        console.log('Account loaded:', userAccount);
+  
+        const history = await fetchSwapHistory();
+        setSwapHistory(history);
+      }
+    };
+  
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+  
+      handleAccountsChanged(window.ethereum.selectedAddress ? [window.ethereum.selectedAddress] : []);
+  
+      return () => {
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+      };
+    }
+  }, [dispatch]);
+  
 
   const DEX_AGGREGATOR_ADDRESS = "0xAf8ae0221E020F7be694792caa7B36532Da07159"; 
 
@@ -173,7 +197,7 @@ function App() {
         const { chainId, networkName } = await loadNetwork(provider, dispatch);
         console.log(`Connected to network: ${networkName} (Chain ID: ${chainId})`);
         setNetworkName(networkName);
-        window.location.reload();
+   
         if (!DEX_AGGREGATOR_ADDRESS || DEX_AGGREGATOR_ADDRESS === ethers.constants.AddressZero) {
           throw new Error("DexAggregator address is invalid.");
         }
