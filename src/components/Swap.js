@@ -16,12 +16,11 @@ const SwapForm = ({
     handleSwap,
     handleOptimize,
     provider,
-    dexesData, // Ensure dexesData is properly passed from App.js
-    setOutputAmountInApp // New prop to pass the output amount back to App.js
+    dexesData, 
+    setOutputAmountInApp
 }) => {
     console.log('Received Dexes:', dexesData);
     const [amm, setAmm] = useState(null);
-    // Output amount state
     const [outputAmount, setOutputAmount] = useState('');
 
     const handleAmmSelect = (selectedAmm) => {
@@ -32,7 +31,7 @@ const SwapForm = ({
         const calculateOutputAmount = async () => {
             if (!tokenIn || !tokenOut || !amm || !amountIn) {
                 setOutputAmount('');
-                setOutputAmountInApp(''); // Update in App.js
+                setOutputAmountInApp('');
                 return;
             }
 
@@ -51,10 +50,9 @@ const SwapForm = ({
                     result = await ammContract.calculateToken2Swap(parsedInputAmount);
                 }
                 const formattedOutputAmount = ethers.utils.formatUnits(result, 'ether');
-                // Update output token value
                 console.log('Output amount calculated:', formattedOutputAmount);
                 setOutputAmount(formattedOutputAmount);
-                setOutputAmountInApp(formattedOutputAmount); // Update in App.js
+                setOutputAmountInApp(formattedOutputAmount);
             } catch (error) {
                 console.error('Error calculating output amount:', error);
                 window.alert('Error calculating swap output. Check console for details.');

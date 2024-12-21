@@ -18,7 +18,7 @@ async function main() {
   const chainId = (await deployer.provider.getNetwork()).chainId;
   console.log("Chain ID:", chainId);
 
-  let totalGasUsed = ethers.BigNumber.from(0); // Zmienna do sumowania gazu
+  let totalGasUsed = ethers.BigNumber.from(0); 
 
   // Deploy DexAggregator
   console.log("Deploying DexAggregator contract...");

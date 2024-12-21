@@ -8,7 +8,6 @@ import { ethers } from 'ethers';
 import SwapForm from './SwapForm';
 import DexTable from './DexTable';
 import backgroundImage from '../background16.jpeg';
-import logo from '../logo.png';
 import DexAggregatorArtifact from '../abis/DexAggregator.json';
 import Token from '../abis/Token.json';
 import { useSelector, useDispatch } from 'react-redux';
@@ -101,7 +100,7 @@ function App() {
 
   useEffect(() => {
     const loadSwapHistory = async () => {
-      if (tokens && tokens.length > 0) { // Sprawdź, czy tokens jest gotowe
+      if (tokens && tokens.length > 0) { 
         const history = await fetchSwapHistory();
         setSwapHistory(history);
       } else {
@@ -110,7 +109,7 @@ function App() {
     };
   
     loadSwapHistory();
-  }, [dexAggregator, tokens]); // Dodaj `tokens` jako zależność
+  }, [dexAggregator, tokens]); 
   
   
   
@@ -158,10 +157,8 @@ function App() {
     }
   }, []);
   
-
-  //const DEX_AGGREGATOR_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Twój adres kontraktu
-  const DEX_AGGREGATOR_ADDRESS = "0xAf8ae0221E020F7be694792caa7B36532Da07159"; // Twój adres kontraktu
-  
+  //const DEX_AGGREGATOR_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; 
+  const DEX_AGGREGATOR_ADDRESS = "0xAf8ae0221E020F7be694792caa7B36532Da07159";
   const loadBlockchainData = async () => {
     try {
       console.log("Initializing provider...");
@@ -244,7 +241,7 @@ function App() {
     }
   };
 
-  // Użycie useEffect do wywołania funkcji po zamontowaniu komponentu
+
   useEffect(() => {
     loadBlockchainData();
   }, []);
@@ -254,25 +251,20 @@ function App() {
       if (accounts.length === 0) {
         console.log('Please connect to MetaMask.');
       } else {
-        // Odświeżanie danych i stanu aplikacji
         await loadBlockchainData();
       }
     };
   
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', handleAccountsChanged);
-  
-      // Wywołanie na początku, aby upewnić się, że stan jest aktualny
       window.ethereum.request({ method: 'eth_accounts' })
         .then(accounts => handleAccountsChanged(accounts))
         .catch(error => console.error(error));
-  
-      // Odpinanie listenera przy odmontowywaniu komponentu
       return () => {
         window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
       };
     }
-  }, []); // Upewnij się, że lista zależności jest odpowiednia, aby uniknąć niepotrzebnych wywołań
+  }, []);
   
   
   
@@ -299,8 +291,6 @@ function App() {
         }
     
         const provider = await loadProvider(dispatch);
-        const user = await loadAccount(dispatch);
-        const chainId = await loadNetwork(provider, dispatch);
     
         if (!tokens) {
           console.error('No token configuration found.');
@@ -332,7 +322,6 @@ function App() {
         return;
     }
 
-    // Oczekiwanie na potwierdzenie transakcji
     console.log('Waiting for transaction confirmation...');
     const receipt = await transaction.wait();
 
@@ -354,8 +343,7 @@ function App() {
     
     console.log('Parsed amountIn (in wei):', parsedAmountIn.toString());
     console.log('Parsed outputAmount (in wei):', parsedOutputAmount.toString());
-    
-    // Wywołanie funkcji executeSwap w kontrakcie po potwierdzeniu transakcji
+
     console.log('Executing swap on DexAggregator...');
     console.log('Executing bestDex.ammAddress', bestDex.ammAddress);
     const transactionSwapHistory = await dexAggregator.executeSwap(
@@ -430,7 +418,7 @@ function App() {
         padding: '20px',
       }}
       >
-        {/* Dodanie komponentu Navigation */}
+        {}
         <Navigation />
     
         <Routes>
@@ -484,7 +472,7 @@ function App() {
         )}
         <DexTable amms={amms} highlightedDex={highlightedDex} />
 
-        <SwapHistory swapHistory={swapHistory} /> {/* Użycie nowego komponentu */}
+        <SwapHistory swapHistory={swapHistory} /> {}
       </>
     }
   />

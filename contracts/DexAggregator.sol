@@ -18,20 +18,20 @@ contract DexAggregator {
     }
 
     struct Swap {
-        address user;          // Adres użytkownika
-        address ammAddress;    // Adres AMM
-        address tokenIn;       // Adres tokena wejściowego
-        address tokenOut;      // Adres tokena wyjściowego
-        uint256 amountIn;      // Ilość tokena wejściowego
-        uint256 amountOut;     // Ilość tokena wyjściowego
-        uint256 timestamp;     // Znacznik czasu
-        bytes32 txHash;        // Hash transakcji
+        address user;
+        address ammAddress;
+        address tokenIn;
+        address tokenOut;
+        uint256 amountIn;
+        uint256 amountOut;
+        uint256 timestamp;
+        bytes32 txHash;
         string ammName;
     }
 
-    Token[] public tokens; // Przechowywanie tokenów
+    Token[] public tokens;
     AMM[] public amms;
-    Swap[] public swapHistory; // Historia swapów
+    Swap[] public swapHistory;
 
     event TokenAdded(string name, string symbol, address tokenAddress);
     event ammAdded(address ammAddress, uint256 makerFee, uint256 takerFee, uint256 liquidityToken1, uint256 liquidityToken2, string name);
@@ -89,10 +89,9 @@ contract DexAggregator {
         address tokenOut,
         uint256 amountIn,
         uint256 amountOut,
-        bytes32 transactionHash, // Hash transakcji przekazywany jako argument
+        bytes32 transactionHash,
         string memory ammName
     ) external {
-        // Dodanie danych swapu do historii
         swapHistory.push(Swap({
             user: msg.sender,
             ammAddress: ammAddress,
@@ -105,7 +104,7 @@ contract DexAggregator {
             ammName: ammName
         }));
 
-        // Emitowanie zdarzenia po wykonaniu swapu
+
         emit SwapExecuted(
             msg.sender,
             ammAddress,
@@ -134,7 +133,7 @@ contract DexAggregatorFactory {
         DexAggregator dexAggregator = new DexAggregator();
         deployedDexAggregator = address(dexAggregator);
 
-        emit DexAggregatorDeployed(deployedDexAggregator); // Emituj zdarzenie z adresem wdrożonego kontraktu
+        emit DexAggregatorDeployed(deployedDexAggregator);
     }
 
     function getDeployedDexAggregator() external view returns (address) {

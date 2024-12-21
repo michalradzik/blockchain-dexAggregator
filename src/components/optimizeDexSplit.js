@@ -25,7 +25,7 @@ export const optimizeDexSplit = async ({
         console.log("  Liquidity Weight:", liquidityWeight);
 
         console.log("Calculating optimization variables...");;
-        // Calculate max and min values for normalization
+
         console.log("DEX Data:", dexesData);
 
         const maxPrice = Math.max(...dexesData.map(dex => parseFloat(dex.price || 0)));

@@ -8,8 +8,6 @@ import backgroundImage from '../background16.jpeg';
 const AmmDetails = ({ amms }) => {
   const { ammId } = useParams();
   const navigate = useNavigate();
-console.log("AmmDetails=", amms)
-  // Pobieranie konkretnego AMM na podstawie ID
   const amm = amms ? amms[ammId] : null;
 
   if (!amm) {

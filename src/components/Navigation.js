@@ -22,36 +22,42 @@ const Navigation = () => {
   }
 
   const networkHandler = async (e) => {
-    console.log('Selected network:', e.target.value);
-    try {
-      await window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: e.target.value }],
-      });
-    } catch (switchError) {
-      console.error('Error switching networks:', switchError);
-      if (switchError.code === 4902) {
-        try {
-          await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [{
-              chainId: e.target.value,
-              chainName: 'Sepolia',
-              nativeCurrency: {
-                name: 'SepoliaETH',
-                symbol: 'SepoliaETH',
-                decimals: 18
-              },
-              rpcUrls: ['https://eth-sepolia.g.alchemy.com/v2/rvqQZ6AFZwcbLCuE02OnXtBuxiCCcwt_'],
-              blockExplorerUrls: ['https://sepolia.etherscan.io']
-            }],
-          });
-        } catch (addError) {
-          console.error('Failed to add the network:', addError);
-        }
+    const chainId = e.target.value;
+  
+    if (chainId === "0xA9A409") { // Chain ID for Sepolia
+      try {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: '0xA9A409', // Sepolia Chain ID in hexadecimal
+            chainName: 'Sepolia',
+            nativeCurrency: {
+              name: 'Ether',
+              symbol: 'ETH', // Corrected to a shorter symbol
+              decimals: 18
+            },
+            rpcUrls: ['https://eth-sepolia.g.alchemy.com/v2/rvqQZ6AFZwcbLCuE02OnXtBuxiCCcwt_'],
+            blockExplorerUrls: ['https://sepolia.etherscan.io']
+          }],
+        });
+      } catch (error) {
+        console.error('Failed to add the network:', error);
+      }
+    } else {
+      // Handle other networks similarly, if needed
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: chainId }],
+        });
+      } catch (switchError) {
+        console.error('Failed to switch the network:', switchError);
       }
     }
-  };
+};
+
+  
+  
   
 
   return (

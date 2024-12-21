@@ -16,7 +16,7 @@ contract AMM {
     mapping(address => uint256) public shares;
     uint256 constant PRECISION = 10**18;
 
-    mapping(bytes32 => SwapDetails) public swaps; // Mapping do przechowywania szczegółów swapów
+    mapping(bytes32 => SwapDetails) public swaps;
 
     struct SwapDetails {
         address user;

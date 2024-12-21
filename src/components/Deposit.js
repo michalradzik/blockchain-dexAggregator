@@ -26,33 +26,22 @@ const Deposit = ({ amm, amms }) => {
   const symbols = useSelector(state => state.tokens.symbols);
   const balances = useSelector(state => state.tokens.balances);
   
- //const amm = useSelector(state => state.amm.contract);
+ 
   const isDepositing = useSelector(state => state.amm.depositing.isDepositing);
   const isSuccess = useSelector(state => state.amm.depositing.isSuccess);
   const transactionHash = useSelector(state => state.amm.depositing.transactionHash);
   console.log("AMM Deposit Contract:", amm);
   console.log("AMMssss Deposit Contract::", amms);
-  // Logowanie stanu
-  //console.log("Token 1 Amount:", token1Amount);
-  //console.log("Token 2 Amount:", token2Amount);
-  //console.log("Provider:", provider);
-  //console.log("Account:", account);
-  //console.log("Tokens:", tokens);
-  //console.log("Symbols:", symbols);
-  //console.log("Balances:", balances);
-  //console.log("AMM Contract:", amm);
-  //console.log("Is Depositing:", isDepositing);
-  //console.log("Is Success:", isSuccess);
-  //console.log("Transaction Hash:", transactionHash);
+ 
   
   const dispatch = useDispatch();
 
-  //console.log("AMMs Contract:", amms);
+
   const amountHandler = async (e) => {
     const ammContract = new ethers.Contract(amm.ammAddress, AMM_ABI, provider);
     if (e.target.id === 'token1') {
       setToken1Amount(e.target.value);
-      // Fetch value from chain
+
       const _token1Amount = ethers.utils.parseUnits(e.target.value, 'ether');
       const result = await ammContract.calculateToken2Deposit(_token1Amount);
       const _token2Amount = ethers.utils.formatUnits(result.toString(), 'ether');
@@ -61,7 +50,7 @@ const Deposit = ({ amm, amms }) => {
     } else {
       setToken2Amount(e.target.value);
 
-      // Fetch value from chain
+    
       const _token2Amount = ethers.utils.parseUnits(e.target.value, 'ether');
       const result = await ammContract.calculateToken1Deposit(_token2Amount);
       const _token1Amount = ethers.utils.formatUnits(result.toString(), 'ether');

@@ -15,7 +15,7 @@ import {
   loadBalances
 } from '../store/interactions'
 
-const Withdraw = ({ amm, amms }) => { // odbieramy `amm` jako prop
+const Withdraw = ({ amm, amms }) => {
   console.log("amm==="+amm)
   console.log("amms==="+amms)
   const [amount, setAmount] = useState(0)
@@ -44,12 +44,12 @@ const Withdraw = ({ amm, amms }) => { // odbieramy `amm` jako prop
 
     await removeLiquidity(
       provider,
-      amm, // używamy przekazanego `amm`
+      amm, 
       _shares,
       dispatch
     )
 
-    await loadBalances([amm], tokens, account, dispatch, provider) // przekazujemy amm jako lista
+    await loadBalances([amm], tokens, account, dispatch, provider)
 
     setShowAlert(true)
     setAmount(0)

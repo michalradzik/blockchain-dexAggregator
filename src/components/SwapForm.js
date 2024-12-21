@@ -27,7 +27,6 @@ const SwapForm = ({
   const inputHandler = (e) => {
     setAmountIn(e.target.value);
   };
-console.log('dexes=', dexesData)
   useEffect(() => {
     const calculateOutputAmount = async () => {
       if (!tokenIn || !tokenOut || !amm || !amountIn) {
@@ -46,11 +45,10 @@ console.log('dexes=', dexesData)
           provider,
         });
 
-        // Create an AMM contract instance
+
         const signer = provider.getSigner();
         const ammContract = new Contract(amm.ammAddress, AMM_ABI, signer);
 
-        // Calculate output amount
         let result;
         if (tokenIn === 'DAPP') {
           result = await ammContract.calculateToken1Swap(parsedInputAmount);
