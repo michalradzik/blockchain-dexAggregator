@@ -5,8 +5,9 @@ import Withdraw from './Withdraw';
 import Deposit from './Deposit';
 import backgroundImage from '../background16.jpeg';
 
-const AmmDetails = ({ amms }) => {
+const AmmDetails = ({ amms}) => {
   const { ammId } = useParams();
+
   const navigate = useNavigate();
   const amm = amms ? amms[ammId] : null;
 
@@ -49,14 +50,6 @@ const AmmDetails = ({ amms }) => {
           <tr>
             <td className="table-cell"><strong>Address:</strong></td>
             <td className="table-cell">{amm.ammAddress || 'N/A'}</td>
-          </tr>
-          <tr>
-            <td className="table-cell"><strong>Token In:</strong></td>
-            <td className="table-cell">{amm.tokenInSymbol || 'N/A'} ({amm.tokenIn || 'N/A'})</td>
-          </tr>
-          <tr>
-            <td className="table-cell"><strong>Token Out:</strong></td>
-            <td className="table-cell">{amm.tokenOutSymbol || 'N/A'} ({amm.tokenOut || 'N/A'})</td>
           </tr>
           <tr>
             <td className="table-cell"><strong>Price:</strong></td>
