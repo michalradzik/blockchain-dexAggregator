@@ -57,8 +57,6 @@ Clone the Repository
 git clone https://github.com/michalradzik/blockchain-dexAggregator.git
 cd blockchain-dexAggregator
 Install Dependencies
-bash
-Skopiuj kod
 npm install
 Deployment
 Deploy Smart Contracts:
